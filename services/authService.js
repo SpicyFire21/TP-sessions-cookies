@@ -26,41 +26,41 @@ class AuthService {
     }
 
     static async login(email, password) {
+    const user = UserModel.findByEmail(email);
 
-        const user = UserModel.findByEmail(email);
-
-        if (!user) {
-            throw new Error('INVALID_CREDENTIALS');
-        }
-
-        // Vérifier blocage après trop de tentatives
-        if (user.tentatives_echec >= 5) {
-            throw new Error('ACCOUNT_LOCKED');
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-
-        if (!isPasswordValid) {
-            const stmt = db.prepare(`UPDATE utilisateurs SET tentatives_echec = tentatives_echec + 1 WHERE id = ?`);
-            stmt.run(user.id);
-            throw new Error('INVALID_CREDENTIALS');
-        }
-
-        if (user.tentatives_echec > 0) {
-        const stmt = db.prepare(`UPDATE utilisateurs SET tentatives_echec = 0 WHERE id = ?`);
-        stmt.run(user.id);
-        }
-
-        return {
-            success: true,
-            user: {
-                id: user.id,
-                email: user.email,
-                nom: user.nom,
-                prenom: user.prenom
-            }
-        };
+    if (!user) {
+        throw new Error('INVALID_CREDENTIALS');
     }
+
+    // Vérifier blocage après trop de tentatives
+    if (user.tentatives_echec >= 5) {
+        throw new Error('ACCOUNT_LOCKED');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+    if (!isPasswordValid) {
+        // Incrémenter le compteur seulement en cas d'échec
+        UserModel.incrementFailedAttempts(user.id);
+        throw new Error('INVALID_CREDENTIALS');
+    }
+
+    // Réinitialiser le compteur uniquement après succès
+    if (user.tentatives_echec > 0) {
+        UserModel.resetFailedAttempts(user.id);
+    }
+
+    return {
+        success: true,
+        user: {
+            id: user.id,
+            email: user.email,
+            nom: user.nom,
+            prenom: user.prenom
+        }
+    };
+}
+
 }
 
 module.exports = AuthService;

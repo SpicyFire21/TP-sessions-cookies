@@ -42,6 +42,17 @@ class UserModel {
 
         return stmt.get(email) !== undefined;
     }
+
+    static incrementFailedAttempts(userId) {
+    const stmt = db.prepare(`UPDATE utilisateurs SET tentatives_echec = tentatives_echec + 1 WHERE id = ?`);
+    stmt.run(userId);
+}
+
+    static resetFailedAttempts(userId) {
+    const stmt = db.prepare(`UPDATE utilisateurs SET tentatives_echec = 0 WHERE id = ?`);
+    stmt.run(userId);
+}
+
 }
 
 module.exports = UserModel;
