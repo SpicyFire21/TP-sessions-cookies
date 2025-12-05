@@ -1,40 +1,54 @@
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/userModel');
 
-/**
- * Service d'authentification - Logique métier
- */
 class AuthService {
-  /**
-   * Enregistrer un nouvel utilisateur
-   * @param {string} email - Email
-   * @param {string} password - Mot de passe en clair
-   * @param {string} nom - Nom
-   * @param {string} prenom - Prénom
-   * @returns {Object} Résultat de l'enregistrement
-   */
-  static async register(email, password, nom, prenom) {
-    // TODO
-  }
 
-  /**
-   * Authentifier un utilisateur
-   * @param {string} email - Email
-   * @param {string} password - Mot de passe
-   * @returns {Object} Résultat de l'authentification
-   */
-  static async login(email, password) {
-    // TODO
-  }
+    static async register(email, password, nom, prenom) {
 
-  /**
-   * Obtenir les informations d'un utilisateur
-   * @param {number} userId - ID de l'utilisateur
-   * @returns {Object} Informations utilisateur
-   */
-  static getUserProfile(userId) {
-    //TODO
-  }
+        if (UserModel.emailExists(email)) {
+            throw new Error('EMAIL_EXISTS');
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const user = UserModel.create(email, passwordHash, nom, prenom);
+
+        return {
+            success: true,
+            message: 'Utilisateur créé avec succès',
+            user: {
+                id: user.id,
+                email: user.email,
+                nom: user.nom,
+                prenom: user.prenom
+            }
+        };
+    }
+
+    static async login(email, password) {
+
+        const user = UserModel.findByEmail(email);
+
+        if (!user) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        if (!isPasswordValid) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+        return {
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                nom: user.nom,
+                prenom: user.prenom
+            }
+        };
+    }
 }
 
 module.exports = AuthService;

@@ -2,59 +2,64 @@ const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const { initDatabase } = require('./models/database');
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = 3000;
 
-// Initialiser la base de données
+// Base de données
 initDatabase();
 
-// Configuration du moteur de templates EJS
+// Templates EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware pour parser les données du formulaire
+// Parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Middleware pour les fichiers statiques (CSS, images, etc.)
+// Fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware pour parser les cookies
-// TODO
+// Cookies
+app.use(cookieParser());
 
+// Sessions
+app.use(session({
+    secret: 'votre-cle-secrete-super-securisee',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
 
-// Configuration des sessions
-//TODO
-
-// Logger de requêtes (pour le débogage)
+// Middleware de debug (à retirer en production)
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
+ console.log('='.repeat(50));
+ console.log('📍 Route:', req.method, req.path);
+ console.log('🍪 Session ID:', req.sessionID);
+ console.log('👤 Utilisateur:', req.session.user || 'Non connecté');
+ console.log('='.repeat(50));
+ next();
 });
+
 
 // Routes
 app.use('/', authRoutes);
 
-// Route par défaut - rediriger vers login
 app.get('/', (req, res) => {
-  // TODO
+    if (req.session.user) {
+        res.redirect('/home');
+    } else {
+        res.redirect('/login');
+    }
 });
 
-// Gestion des erreurs 404
-//TODO
-
-// Gestion des erreurs serveur
-//TODO
-
-// Démarrage du serveur
+// Serveur
 app.listen(PORT, () => {
-  console.log('='.repeat(50));
-  console.log('🚀 Serveur démarré avec succès !');
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log(`🗄️  Base de données: SQLite`);
-  console.log(`🍪 Sessions: Express-session`);
-  console.log(`🎨 Moteur de templates: EJS`);
-  console.log('='.repeat(50));
+    console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
 });

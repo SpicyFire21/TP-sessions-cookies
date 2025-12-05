@@ -1,21 +1,24 @@
 const express = require('express');
 const router = express.Router();
-//const AuthController = require('../controllers/authController');
+const AuthController = require('../controllers/authController');
 
-// Middleware pour vérifier si l'utilisateur est authentifié
+// Middleware d'authentification
 function requireAuth(req, res, next) {
-  //TODO
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    next();
 }
 
-// Routes publiques à completer
-router.get('/register');
-router.post('/register');
+// Routes publiques
+router.get('/register', AuthController.showRegisterPage);
+router.post('/register', AuthController.handleRegister);
 
-router.get('/login');
-router.post('/login');
+router.get('/login', AuthController.showLoginPage);
+router.post('/login', AuthController.handleLogin);
 
 // Routes protégées
-router.get('/home');
-router.get('/logout');
+router.get('/home', requireAuth, AuthController.showHomePage);
+router.get('/logout', requireAuth, AuthController.handleLogout);
 
 module.exports = router;
