@@ -12,7 +12,9 @@ function initDatabase() {
             password_hash TEXT NOT NULL,
             nom TEXT,
             prenom TEXT,
-            date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
+            date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+            tentatives_echec INTEGER DEFAULT 0
+
         )
     `);
  console.log('✅ Base de données initialisée');

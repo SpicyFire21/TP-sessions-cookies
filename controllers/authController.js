@@ -87,7 +87,9 @@ class AuthController {
             res.redirect('/home');
 
         } catch (error) {
-
+            if (error.message === 'ACCOUNT_LOCKED') {
+                return res.render('login', { error: 'Compte bloqué après trop de tentatives' });
+            }
             if (error.message === 'INVALID_CREDENTIALS') {
                 return res.render('login', {
                     error: 'Email ou mot de passe incorrect'

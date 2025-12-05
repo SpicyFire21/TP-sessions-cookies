@@ -1,24 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/authController');
+const AuthMiddleware = require('../middlewares/auth.middleware')
 
-// Middleware d'authentification
-function requireAuth(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
-    next();
-}
 
 // Routes publiques
 router.get('/register', AuthController.showRegisterPage);
-router.post('/register', AuthController.handleRegister);
+router.post('/register',AuthMiddleware.validatePassword, AuthController.handleRegister);
 
 router.get('/login', AuthController.showLoginPage);
 router.post('/login', AuthController.handleLogin);
 
 // Routes protégées
-router.get('/home', requireAuth, AuthController.showHomePage);
-router.get('/logout', requireAuth, AuthController.handleLogout);
+router.get('/home', AuthMiddleware.requireAuth, AuthController.showHomePage);
+router.get('/logout', AuthMiddleware.requireAuth, AuthController.handleLogout);
 
 module.exports = router;

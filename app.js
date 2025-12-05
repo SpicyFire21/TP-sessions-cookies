@@ -4,30 +4,26 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const { initDatabase } = require('./models/database');
 const authRoutes = require('./routes/authRoutes');
+require('dotenv').config();
+
 
 const app = express();
 const PORT = 3000;
 
-// Base de données
 initDatabase();
 
-// Templates EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Cookies
 app.use(cookieParser());
 
-// Sessions
 app.use(session({
-    secret: 'votre-cle-secrete-super-securisee',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -48,7 +44,6 @@ app.use((req, res, next) => {
 });
 
 
-// Routes
 app.use('/', authRoutes);
 
 app.get('/', (req, res) => {
@@ -59,7 +54,6 @@ app.get('/', (req, res) => {
     }
 });
 
-// Serveur
 app.listen(PORT, () => {
     console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
 });
