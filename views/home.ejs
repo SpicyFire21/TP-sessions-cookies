@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - Système d'Authentification</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="home-box">
+      <div class="header">
+        <h1>🏠 Tableau de Bord</h1>
+        <a href="/logout" class="btn btn-secondary">Déconnexion</a>
+      </div>
+
+      <div class="welcome-section">
+        <h2>👋 Bienvenue <%= user.prenom || user.email %> !</h2>
+        <p class="subtitle">Vous êtes maintenant connecté à l'application</p>
+      </div>
+
+      <div class="user-info-card">
+        <h3>📋 Informations de votre compte</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Email :</span>
+            <span class="value"><%= user.email %></span>
+          </div>
+
+          <% if (user.nom) { %>
+            <div class="info-item">
+              <span class="label">Nom :</span>
+              <span class="value"><%= user.nom %></span>
+            </div>
+          <% } %>
+
+          <% if (user.prenom) { %>
+            <div class="info-item">
+              <span class="label">Prénom :</span>
+              <span class="value"><%= user.prenom %></span>
+            </div>
+          <% } %>
+
+          <div class="info-item">
+            <span class="label">ID Utilisateur :</span>
+            <span class="value">#<%= user.id %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="session-info">
+        <h3>🔐 Informations de session</h3>
+        <p>
+          ✅ Vous êtes authentifié via les <strong>sessions Express</strong>.<br>
+          🍪 Un cookie de session a été créé dans votre navigateur.<br>
+          💾 Vos données de session sont stockées côté serveur.
+        </p>
+      </div>
+
+      <div class="actions">
+        <h3>⚡ Actions disponibles</h3>
+        <div class="action-buttons">
+          <button class="btn btn-info" onclick="alert('Fonctionnalité à venir !')">
+            📊 Voir mes statistiques
+          </button>
+          <button class="btn btn-info" onclick="alert('Fonctionnalité à venir !')">
+            ⚙️ Paramètres du compte
+          </button>
+          <a href="/logout" class="btn btn-danger">
+            🚪 Se déconnecter
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

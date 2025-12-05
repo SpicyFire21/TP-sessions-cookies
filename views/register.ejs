@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Système d'Authentification</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="auth-box">
+      <h1>📝 Inscription</h1>
+      <p class="subtitle">Créez votre compte pour accéder à l'application</p>
+
+      <% if (error) { %>
+        <div class="alert alert-error">
+          ❌ <%= error %>
+        </div>
+      <% } %>
+
+      <% if (success) { %>
+        <div class="alert alert-success">
+          ✅ <%= success %>
+        </div>
+      <% } %>
+
+      <form action="/register" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="votre.email@example.com"
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input
+            type="text"
+            id="nom"
+            name="nom"
+            placeholder="Dupont"
+            autocomplete="family-name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input
+            type="text"
+            id="prenom"
+            name="prenom"
+            placeholder="Jean"
+            autocomplete="given-name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Minimum 6 caractères"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe *</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+            placeholder="Retapez votre mot de passe"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Créer mon compte
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Vous avez déjà un compte ? <a href="/login">Se connecter</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
